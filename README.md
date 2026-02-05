@@ -26,9 +26,16 @@ Proyecto Pokédex desarrollado en **Laravel**, que consume datos de Pokémon y l
 
 # Requisitos
 - Git
+    sudo apt install git
+    
 - Docker
+    sudo apt install docker
+    
 - Composer
+    sudo apt install composer
+    
 - PHP y sus librerias cli common mbstring xml zip curl mysql bcmath dom tokenizer json
+    sudo apt install -y php php.1-cli php-mbstring php-xml php-zip php-curl php-mysql php-bcmath php-dom php.1-tokenizer php-json composer
 
 # Descargar e ingresar al directorio
 - git clone https://github.com/gucerni-maker/pokeapi.git
