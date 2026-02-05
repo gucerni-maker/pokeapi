@@ -16,66 +16,71 @@ Proyecto Pokédex desarrollado en **Laravel**, que consume datos de Pokémon y l
 
 # Tecnologías utilizadas
 
-- PHP 8.x
+- PHP 8.3
 - Laravel
 - Bootstrap 5
 - Blade Templates
-- MySQL / MariaDB
+- MySQL
 - Apache (mod_rewrite)
 - Git & GitHub
 
 # Requisitos
-
-- PHP >= 8.1
+- Git
+- Docker
 - Composer
-- MySQL o MariaDB
-- Servidor web (Apache recomendado)
-- Extensiones PHP habilitadas:
-  - pdo
-  - pdo_mysql
-  - mbstring
-  - openssl
-  - tokenizer
-  - xml
-  - ctype
-  - curl
+- PHP y sus librerias cli common mbstring xml zip curl mysql bcmath dom tokenizer json
 
-# Instalación
+# Descargar e ingresar al directorio
+- git clone https://github.com/gucerni-maker/pokeapi.git
+- cd pokeapi
+
+# Otorgar permisos
+- chmod -R 775 storage bootstrap/cache
+
+# Instalar dependencias
+- composer install
+
+# Configurar variables de entorno
+- cp .env.example .env
+
+# configurar archivo .env
+APP_PORT=8080
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=tu_base_de_datos
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+# Generar clave de aplicación
+- php artisan key:generate
+
+# Construir la imagen
+./vendor/bin/sail up -d
+
+# Ejecutar las migraciones
+- ./vendor/bin/sail artisan migrate
+
+# Ejecutar los seeds
+- ./vendor/bin/sail artisan db:seeds
+
+# Ejectuar la sincronizacion
+./vendor/bin/sail artisan pokemon:sync
+
+# Acceder a la aplicacion
+- http://localhost:8080
+
+----------------------------------------------------
+
+# Problemas comunes durante la instalación
+
+# Error al construir la imagen de Sail (`sail build` falla)
+
+Este error ocurre cuando Docker no puede descargar paquetes durante la construcción de la imagen. Soluciones:
 
 ```bash
-git clone https://github.com/tu-usuario/tu-repo.git
-cd tu-repo
-composer install
-cp .env.example .env
-php artisan key:generate
-sudo chown -R www-data:www-data storage bootstrap/cache
-sudo chmod -R 775 storage bootstrap/cache
-php artisan migrate
-php artisan pokemon:sync
-
-Ejemplo de VirtualHost:
-<VirtualHost *:80>
-    ServerName tu-dominio-o-ip
-    DocumentRoot /var/www/pokeapi/public
-
-    <Directory /var/www/pokeapi/public>
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    ErrorLog ${APACHE_LOG_DIR}/pokeapi.log
-    CustomLog ${APACHE_LOG_DIR}/pokeapi.log combined
-</VirtualHost>
-
-Habilitar modulos necesarios:
-sudo a2enmod rewrite
-sudo systemctl restart apache2
-
-Ejemplo de .htaccess (ubicado en el directorio public)
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
-</IfModule>
+# Solución 1: Rebuild con caché limpio
+./vendor/bin/sail down
+docker system prune -f --volumes
+./vendor/bin/sail build --no-cache
+./vendor/bin/sail up -d
